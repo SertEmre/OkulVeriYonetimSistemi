@@ -55,18 +55,57 @@ class DbManager:
             print(f"{self.cursor.rowcount} tane kayıt güncellendi.")
         except mysql.connector.Error as err:
             print('Hata:',err)
+    
+    def öğretmengetirId(self,Id):
+        sql = "select * from öğretmenler where Id = %s" 
+        value = (Id,)
+        self.cursor.execute(sql,value)
+        try:
+            obj = self.cursor.fetchall()
+            return Teacher.CreateTeacher(obj)
+        except mysql.connector.Error as err:
+            print("hata:",err)
 
     def öğretmendüzenle(self,teacher:Teacher):
-        pass
+        sql = "UPDATE öğretmenler SET branş = %s,isim=%s, soyisim=%s, doğum_günü=%s, cinsiyet=%s WHERE Id= %s" 
+        value = (teacher.branş, teacher.isim, teacher.soyisim, teacher.doğum_günü, teacher.cinsiyet, teacher.Id)
+        self.cursor.execute(sql,value)
+        try:
+            self.connection.commit()
+            print(f"{self.cursor.rowcount} tane kayıt güncellendi.")
+        except mysql.connector.Error as err:
+            print('Hata:', err)
 
     def öğretmenkayıt(self,teacher:Teacher):
-        pass       
+        sql = "INSERT INTO öğretmenler(Id,branş,isim,soyisim,doğum_günü,cinsiyet) VALUES (%s,%s,%s,%s,%s,%s)"
+        value =(teacher.Id,teacher.branş,teacher.isim,teacher.soyisim,teacher.doğum_günü,teacher.cinsiyet)
+        self.cursor.execute(sql,value)
+
+        try:
+            self.connection.commit()
+            print(f"{self.cursor.rowcount} tane kayıt eklendi.")
+        except mysql.connector.Error as err:
+            print('Hata:',err)       
 
     def __del__(self):
         self.connection.close()
         print("db silindi")
 
 db = DbManager(connection)
+
+
+# ---------------------------------Öğretmen Ekleme
+# doğum_tarihi = datetime(1994,4,23)
+# tchr = Teacher(4,"Beden","İsmet","Paşa",doğum_tarihi,"E")
+# db.öğretmenkayıt(tchr)
+#------------------------------Öğretmen Düzenle
+# tchr = db.öğretmengetirId(2)
+# if tchr:
+#     tchr = tchr[0]
+#     tchr.isim = "Fırat"
+#     db.öğretmendüzenle(tchr)
+# else:
+#     print("Değişiklik yapmak istediğiniz öğretmen bulunamadı")
 
 #-----------------------------------Öğrenci Düzenle
 # student =db.öğrencigetirId(1010)
