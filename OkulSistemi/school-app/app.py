@@ -29,6 +29,28 @@ class App:
             else:
                 print("yanlış seçim yaptınız!")
     
+    def editStudent(self):
+        classid = self.displayStudents()
+        student_no = int(input("Öğrenci numarası:"))
+
+        student = self.db.öğrencigetirId(student_no)
+
+        student[0].isim = input('isim:') or student[0].isim
+        student[0].soyisim = input('soyisim:') or student[0].soyisim
+        student[0].cinsiyet = input('cinsiyet:') or student[0].cinsiyet
+        student[0].sınıfId = input('sınıfId:') or student[0].sınıfId
+
+        year = input("Doğum yılı:") or student[0].birthdate.year
+        month = input("Doğum ayı:") or student[0].birthdate.month
+        day = input("Doğum günü:") or student[0].birthdate.day
+
+        year = int(year)
+        month = int(month)
+        day = int(day)
+
+        student[0].doğumtarihi = datetime.date(year, month, day)
+        self.db.öğrencidüzenle(student[0]) 
+
     def addStudent(self):
         classes = self.db.sınıfgetir()
         for c in classes:
@@ -56,9 +78,10 @@ class App:
 
         students = self.db.öğrencilerigetirSınıfId(classid )
         print("Öğrenci Listesi")
-        for index,std in enumerate(students):
-            print(f"{index+1}-{std.isim}{std.soyisim}| No:{std.okulnumarası}")
-    
+        for std in students:
+            print(f"{std.okulnumarası}-{std.isim}{std.soyisim}| No:{std.okulnumarası}")
+
+        return classid
     def _get_sinif_ismi(self, classid, classes):
         for c in classes:
             if c.Id == classid:
