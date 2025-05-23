@@ -98,6 +98,15 @@ class DbManager:
         except mysql.connector.Error as err:
             print("hata:", err)
             return None
+    def öğrenciSil(self,okulnumarası):
+        sql = "DELETE FROM öğrenciler WHERE okulnumarası = %s"
+        value = (okulnumarası,)
+        self.cursor.execute(sql,value)
+        try:
+            self.connection.commit()
+            print(f"{self.cursor.rowcount} tane kayıt silindi.")
+        except mysql.connector.Error as err:
+            print('Hata:',err)
     
     def __del__(self):
         self.connection.close()

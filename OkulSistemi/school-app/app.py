@@ -19,7 +19,7 @@ class App:
             elif islem == "3":
                 self.editStudent()
             elif islem =="4":
-                pass
+                self.deleteStudent()
             elif islem == "5":
                 pass
             elif islem == "6":
@@ -29,6 +29,12 @@ class App:
             else:
                 print("yanlış seçim yaptınız!")
     
+    def deleteStudent(self):
+        classid = self.displayStudents()
+        student_id = int(input("öğrenci numarası:"))
+
+        self.db.öğrenciSil(student_id)
+
     def editStudent(self):
         classid = self.displayStudents()
         student_no = int(input("Öğrenci numarası:"))
@@ -79,7 +85,7 @@ class App:
         students = self.db.öğrencilerigetirSınıfId(classid )
         print("Öğrenci Listesi")
         for std in students:
-            print(f"{std.okulnumarası}-{std.isim}{std.soyisim}| No:{std.okulnumarası}")
+            print(f"{std.okulnumarası}-{std.isim}{std.soyisim}")
 
         return classid
     def _get_sinif_ismi(self, classid, classes):
