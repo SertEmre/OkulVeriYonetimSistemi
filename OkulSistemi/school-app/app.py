@@ -46,7 +46,7 @@ class App:
             self.tekSinifDersleriniListele(sinif_id)
 
     def tumSinifDersleriniListele(self):
-        self.db.cursor.execute("SELECT Id, sınıf_ismi, ÖğretmenId FROM sınıf_dersleri")
+        self.db.cursor.execute("SELECT SınıfId, DersId, ÖğretmenId FROM sınıf_dersleri")
         iliskiler = self.db.cursor.fetchall()
 
         if not iliskiler:
@@ -60,18 +60,18 @@ class App:
         for iliski in iliskiler:
             sinif_id, ders_id ,ogretmen_id = iliski
 #Sınıf
-        self.db.cursor.execute("SELECT sınıf_ismi FROM sınıflar WHERE Id = %s", (sinif_id,))
-        sinif_adi = self.db.cursor.fetchone()[0]
-#Ders#
-        self.db.cursor.execute("SELECT ders_ismi FROM dersler WHERE Id = %s", (ders_id,))
-        ders_adi = self.db.cursor.fetchone()[0]
+            self.db.cursor.execute("SELECT sınıf_ismi FROM sınıflar WHERE Id = %s", (sinif_id,))
+            sinif_adi = self.db.cursor.fetchone()[0]
+#Ders#  
+            self.db.cursor.execute("SELECT ders_ismi FROM dersler WHERE Id = %s", (ders_id,))
+            ders_adi = self.db.cursor.fetchone()[0]
 #Öğretmen
-        self.db.cursor.execute("SELECT isim, soyisim FROM öğretmenler WHERE Id = %s", (ogretmen_id,))
-        ogretmen = self.db.cursor.fetchone()
-        ogretmen_adi = f"{ogretmen[0]} {ogretmen[1]}"
-        
-        print("{:<5} {:<15} {:<20} {:<15}".format(
-            sinif_id, sinif_adi, ders_adi, ogretmen_adi))
+            self.db.cursor.execute("SELECT isim, soyisim FROM öğretmenler WHERE Id = %s", (ogretmen_id,))
+            ogretmen = self.db.cursor.fetchone()
+            ogretmen_adi = f"{ogretmen[0]} {ogretmen[1]}"
+
+            print("{:<5} {:<15} {:<20} {:<15}".format(
+                sinif_id, sinif_adi, ders_adi, ogretmen_adi))
     
     def tekSinifDersleriniListele(self,sinif_id):
         self.db.cursor.execute("SELECT DersId, ÖğretmenId FROM sınıf_dersleri WHERE SınıfId = %s", (sinif_id,))
@@ -164,7 +164,7 @@ class App:
         month = int(month)
         day = int(day)
 
-        student[0].doğumtarihi = datetime.date(year, month, day)
+        student[0].doğumtarihi = datetime.date(int(year),int(month),int(day))
         self.db.öğrencidüzenle(student[0]) 
 
     def addStudent(self):
@@ -180,7 +180,7 @@ class App:
         month = int(input("Doğum ayı:"))
         day = int(input("Doğum günü:"))
         birthdate = datetime.date(year,month,day)
-        gender = input("Cindiyet(E/K):")    
+        gender = input("Cinsiyet(E/K):")    
         student = Student(number,name,surname,birthdate,gender,classid)
         self.db.öğrencikayıt(student)
 

@@ -3,7 +3,7 @@ from datetime import datetime
 from connection import connection
 from ogrenciler import Student
 from ogretmenler import Teacher
-from sınıflarr import Sınıflar
+from sınıflar import Sınıflar
 
 class DbManager:
     def __init__(self,connection):
