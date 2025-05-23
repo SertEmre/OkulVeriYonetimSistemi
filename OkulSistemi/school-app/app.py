@@ -24,13 +24,79 @@ class App:
             elif islem == "5":
                 self.addTeacher()
             elif islem == "6":
-                pass
+                self.sinifDersleriniListele()
             elif islem == "e" or islem == "Ç":
                 break
             else:
                 print("yanlış seçim yaptınız!")
 
+    def sinifDersleriniListele(self):
+        print("\n--- Sınıflara Göre Dersler ---")
 
+        siniflar = self.db.sınıfgetir()
+        for sinif in siniflar:
+            print(f"{sinif.Id}: {sinif.sınıf_ismi}")
+
+        secim = input("\nSınıf ID giriniz (tümünü listelemek için'0'): ")
+
+        if secim == "0":
+            self.tumSinifDersleriniListele()
+        else:
+            sinif_id = int(secim)
+            self.tekSinifDersleriniListele(sinif_id)
+
+    def tumSinifDersleriniListele(self):
+        self.db.cursor.execute("SELECT Id, sınıf_ismi, ÖğretmenId FROM sınıf_dersleri")
+        iliskiler = self.db.cursor.fetchall()
+
+        if not iliskiler:
+            print("Hiç kayıt bulunamadı!'")
+            return
+
+        print("\n Tüm sınıfların ders Listesi")
+        print("{:<5} {:<15} {:<20} {:<15}".format("Sınıf", "Sınıf Adı", "Ders", "Öğretmen"))
+        print("-"*45)
+
+        for iliski in iliskiler:
+            sinif_id, ders_id ,ogretmen_id = iliski
+#Sınıf
+        self.db.cursor.execute("SELECT sınıf_ismi FROM sınıflar WHERE Id = %s", (sinif_id,))
+        sinif_adi = self.db.cursor.fetchone()[0]
+#Ders#
+        self.db.cursor.execute("SELECT ders_ismi FROM dersler WHERE Id = %s", (ders_id,))
+        ders_adi = self.db.cursor.fetchone()[0]
+#Öğretmen
+        self.db.cursor.execute("SELECT isim, soyisim FROM öğretmenler WHERE Id = %s", (ogretmen_id,))
+        ogretmen = self.db.cursor.fetchone()
+        ogretmen_adi = f"{ogretmen[0]} {ogretmen[1]}"
+        
+        print("{:<5} {:<15} {:<20} {:<15}".format(
+            sinif_id, sinif_adi, ders_adi, ogretmen_adi))
+    
+    def tekSinifDersleriniListele(self,sinif_id):
+        self.db.cursor.execute("SELECT DersId, ÖğretmenId FROM sınıf_dersleri WHERE SınıfId = %s", (sinif_id,))
+        iliskiler = self.db.cursor.fetchall()
+
+        self.db.cursor.execute("SELECT sınıf_ismi FROM sınıflar WHERE Id = %s", (sinif_id,))
+        sinif_adi = self.db.cursor.fetchone()[0]   
+
+        if not iliskiler:
+            print(f"\n{sinif_adi} sınıfına ait ders bulunamadı!")
+            return   
+        print(f"\n{sinif_adi} Sınıfı Dersleri:")
+        print("{:<20} {:<25}".format("Ders", "Öğretmen"))
+        print("-"*45) 
+        for iliski in iliskiler:
+            ders_id, ogretmen_id = iliski
+#Ders
+            self.db.cursor.execute("SELECT ders_ismi FROM dersler WHERE Id = %s", (ders_id,))
+            ders_adi = self.db.cursor.fetchone()[0]
+# Öğretmen
+            self.db.cursor.execute("SELECT isim, soyisim FROM öğretmenler WHERE Id = %s", (ogretmen_id,))
+            ogretmen = self.db.cursor.fetchone()
+            ogretmen_adi = f"{ogretmen[0]} {ogretmen[1]}"
+
+            print("{:<20} {:<25}".format(ders_adi, ogretmen_adi))
     def addTeacher(self):
         print("\n--- Öğretmen Ekleme ---")
 
