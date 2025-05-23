@@ -2,6 +2,7 @@ from baglanti import DbManager
 from connection import connection
 import datetime
 from ogrenciler import Student
+from ogretmenler import Teacher
 
 class App:
     def __init__(self):
@@ -21,14 +22,57 @@ class App:
             elif islem =="4":
                 self.deleteStudent()
             elif islem == "5":
-                pass
+                self.addTeacher()
             elif islem == "6":
                 pass
             elif islem == "e" or islem == "Ç":
                 break
             else:
                 print("yanlış seçim yaptınız!")
-    
+
+
+    def addTeacher(self):
+        print("\n--- Öğretmen Ekleme ---")
+
+        while True:
+            try:
+                teacher_id = int(input("Öğretmen ID: "))
+
+                existing_teacher = self.db.öğretmengetirId(teacher_id)
+                if existing_teacher:
+                    print(f"{teacher_id}'ye sahip bir öğretmen zaten var.Başka bir ID belirleyiniz.")
+                    continue              
+                branş = input("Branş: ")
+                isim = input("Öğretmen adı: ")
+                soyisim = input("Öğretmen soyadı: ")
+
+                while True:
+                    try:
+                        year = int(input("Doğum yılı: "))
+                        month = int(input("Doğum ayı: "))
+                        day = int(input("Doğum günü: "))
+                        birthdate = datetime.date(year, month, day)
+                        break
+                    except ValueError:
+                        print("Geçersiz tarih! Lütfen doğru bir tarih girin.")
+
+                cinsiyet = ""
+                while cinsiyet not in ["E", "K"]:
+                    cinsiyet = input("Cinsiyet (E/K): ").upper()
+                    if cinsiyet not in ["E", "K"]:
+                        print("Lütfen sadece 'E' veya 'K' giriniz!(E:Erkek/K:Kız)")
+
+                teacher = Teacher(teacher_id, branş, isim, soyisim, birthdate, cinsiyet)
+                self.db.öğretmenkayıt(teacher)
+                print(f"\n {isim} {soyisim} başarıyla eklendi!")
+                break
+
+            except ValueError:
+                print("Geçersiz ID! Lütfen sadece sayı girin.")
+            except Exception as e:
+                print(f"\nHata oluştu: {str(e)}")
+                break
+
     def deleteStudent(self):
         classid = self.displayStudents()
         student_id = int(input("öğrenci numarası:"))
