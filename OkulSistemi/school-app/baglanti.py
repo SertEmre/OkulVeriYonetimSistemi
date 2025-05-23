@@ -3,7 +3,7 @@ from datetime import datetime
 from connection import connection
 from ogrenciler import Student
 from ogretmenler import Teacher
-
+from sınıflarr import Sınıflar
 
 class DbManager:
     def __init__(self,connection):
@@ -25,12 +25,11 @@ class DbManager:
             return None
 
     def öğrencilerigetirSınıfId(self,sınıfId):
-        sql = "select * from öğrenciler where sınıfId = %s" 
-        value = (sınıfId,)
-        self.cursor.execute(sql,value)
+        sql = "select * from sınıflar" 
+        self.cursor.execute(sql)
         try:
             obj = self.cursor.fetchall()
-            return Student.CreateStudent(obj)
+            return sınıflarr.SınıfOluştur(obj)
         except mysql.connector.Error as err:
             print("hata:",err)
 
@@ -86,7 +85,19 @@ class DbManager:
             print(f"{self.cursor.rowcount} tane kayıt eklendi.")
         except mysql.connector.Error as err:
             print('Hata:',err)       
-
+    def sınıfgetir(self):
+        sql = "SELECT Id, sınıf_ismi, öğretmenId FROM sınıflar"
+        self.cursor.execute(sql)
+        try:
+            obj = self.cursor.fetchall()
+            liste = []
+            for i in obj:
+                liste.append(Sınıflar(i[0], i[1], i[2]))  
+            return liste
+        except mysql.connector.Error as err:
+            print("hata:", err)
+            return None
+    
     def __del__(self):
         self.connection.close()
         print("db silindi")
