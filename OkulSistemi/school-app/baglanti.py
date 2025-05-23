@@ -24,14 +24,15 @@ class DbManager:
             print("VERİTABANI HATASI:", str(e))
             return None
 
-    def öğrencilerigetirSınıfId(self,sınıfId):
-        sql = "select * from sınıflar" 
-        self.cursor.execute(sql)
+    def öğrencilerigetirSınıfId(self, sınıfId):
+        sql = "SELECT okulnumarası, isim, soyisim, doğumtarihi, cinsiyet, sınıfId FROM öğrenciler WHERE sınıfId = %s"
+        self.cursor.execute(sql, (sınıfId,))
         try:
             obj = self.cursor.fetchall()
-            return sınıflarr.SınıfOluştur(obj)
+            return Student.CreateStudent(obj) 
         except mysql.connector.Error as err:
-            print("hata:",err)
+            print("hata:", err)
+            return None
 
     def öğrencikayıt(self,student: Student):  
         sql = "INSERT INTO öğrenciler(okulnumarası,isim,soyisim,doğumtarihi,cinsiyet,sınıfId) VALUES (%s,%s,%s,%s,%s,%s)"
